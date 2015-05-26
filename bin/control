@@ -1,5 +1,6 @@
 #!/bin/bash -e
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
+source $OPENSHIFT_MONGODB_DIR/lib/mongo_context
 export STOPTIMEOUT=20
 
 function isrunning() {
@@ -31,7 +32,7 @@ function _repair_mongod() {
         client_result "Attempting to repair MongoDB ..."
         tmp_config="/tmp/mongodb.repair.conf"
         grep -ve "fork\s*=\s*true" $OPENSHIFT_MONGODB_DIR/conf/mongodb.conf > $tmp_config
-        mongod $authopts -f $tmp_config  \
+        mongo3-mongod $authopts -f $tmp_config  \
                                   --repair
         client_result "MongoDB repair status = $?"
         rm -f $tmp_config
@@ -42,12 +43,12 @@ function _repair_mongod() {
 
 function _start_mongod() {
     authopts=${1:-"--auth"}
-    nohup mongod $authopts \
+    nohup mongo3-mongod $authopts \
                     -f $OPENSHIFT_MONGODB_DIR/conf/mongodb.conf run |& /usr/bin/logshifter -tag mongodb &
     _wait_for_mongod_to_startup
     if ! isrunning; then
        _repair_mongod "$authopts"
-       nohup mongod $authopts \
+       nohup mongo3-mongod $authopts \
                        -f $OPENSHIFT_MONGODB_DIR/conf/mongodb.conf run |& /usr/bin/logshifter -tag mongodb &
        _wait_for_mongod_to_startup
     fi
@@ -124,7 +125,7 @@ function pre_snapshot {
 
    #  Take a "dump".
    creds="-u $OPENSHIFT_MONGODB_DB_USERNAME -p \"$OPENSHIFT_MONGODB_DB_PASSWORD\" --port $OPENSHIFT_MONGODB_DB_PORT"
-   if mongodump -h $OPENSHIFT_MONGODB_DB_HOST $creds --directoryperdb > /dev/null 2>&1; then
+   if mongo3-mongodump -h $OPENSHIFT_MONGODB_DB_HOST $creds --directoryperdb > /dev/null 2>&1; then
       #  Dump ok - now create a gzipped tarball.
       echo "$OPENSHIFT_APP_NAME" > $OPENSHIFT_DATA_DIR/mongodb_dump_old_db_name.txt
       if tar -zcf $OPENSHIFT_DATA_DIR/mongodb_dump_snapshot.tar.gz . ; then
@@ -199,7 +200,7 @@ function restore_from_mongodb_snapshot {
    #        See  https://jira.mongodb.org/browse/SERVER-7262 for details.
    #[ -z "$HAVE_MONGODB_221_RC1" ]  &&  creds=""
 
-   if ! mongorestore -h $OPENSHIFT_MONGODB_DB_HOST              \
+   if ! mongo3-mongorestore -h $OPENSHIFT_MONGODB_DB_HOST              \
                      --port $OPENSHIFT_MONGODB_DB_PORT $creds   \
                      --directoryperdb --drop  1>&2; then
        print_mongo_jira_warnings
@@ -222,7 +223,7 @@ function restore_from_mongodb_snapshot {
                    { application: \"$OPENSHIFT_APP_NAME\", dbhost: \"$OPENSHIFT_MONGODB_DB_HOST\" })
                  use $old_name
                  db.dropDatabase() " | \
-                     mongo --username $OPENSHIFT_MONGODB_DB_USERNAME \
+                     mongo3-mongo --username $OPENSHIFT_MONGODB_DB_USERNAME \
                      --password "$OPENSHIFT_MONGODB_DB_PASSWORD" \
                      "${OPENSHIFT_MONGODB_DB_HOST}:${OPENSHIFT_MONGODB_DB_PORT}/admin"
        fi
