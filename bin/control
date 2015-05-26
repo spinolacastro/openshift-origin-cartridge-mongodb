@@ -1,6 +1,5 @@
 #!/bin/bash -e
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-source $OPENSHIFT_MONGODB_DIR/lib/util
 export STOPTIMEOUT=20
 
 function isrunning() {
