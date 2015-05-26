@@ -1,0 +1,68 @@
+#!/bin/bash
+
+MONGO_PATH=$OPENSHIFT_MONGODB_DIR/usr/bin
+
+function mongo3-bsondump () {
+
+	$MONGO_PATH/bsondump $1
+}
+
+function mongo3-mongo () {
+
+	$MONGO_PATH/mongo $1
+}
+
+function mongo3-mongod () {
+
+	$MONGO_PATH/mongod $1
+}
+
+function mongo3-mongodump () {
+
+	$MONGO_PATH/mongodump $1
+}
+
+function mongo3-mongoexport () {
+
+	$MONGO_PATH/mongoexport $1
+}
+
+function mongo3-mongofiles () {
+
+	$MONGO_PATH/mongofiles $1
+}
+
+function mongo3-mongoimport () {
+
+	$MONGO_PATH/mongoimport $1
+}
+
+function mongo3-mongooplog () {
+
+	$MONGO_PATH/mongooplog $1
+}
+
+function mongo3-mongoperf () {
+
+	$MONGO_PATH/mongoperf $1
+}
+
+function mongo3-mongorestore () {
+
+	$MONGO_PATH/mongorestore $1
+}
+
+function mongo3-mongos () {
+
+	$MONGO_PATH/mongos $1
+}
+
+function mongo3-mongostat () {
+
+	$MONGO_PATH/mongostat $1
+}
+
+function mongo3-mongotop () {
+
+	$MONGO_PATH/mongotop $1
+}
