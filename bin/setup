@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+mongo_version=3.0.3
+
+mkdir -p $OPENSHIFT_MONGODB_DIR/{pid,socket,data,run,usr}
+
+wget "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${mongo_version}.tgz" /tmp/
+
+cd /tmp
+tar zxf "/tmp/mongodb-linux-x86_64-${mongo_version}.tgz" 
+mv mongodb-linux-x86_64-$mongo_version/bin $OPENSHIFT_MONGODB_DIR/usr/
+
+

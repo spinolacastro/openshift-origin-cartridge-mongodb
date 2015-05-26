@@ -1,0 +1,18 @@
+---
+snapshot_exclusions:
+- mongodb/*
+locked_files:
+- bin/
+- bin/*
+- lib/
+- lib/*
+- env/
+- env/*
+- usr/
+- usr/*
+- metadata/
+- metadata/*
+- hooks/
+- hooks/*
+processed_templates:
+- '**/*.erb'
